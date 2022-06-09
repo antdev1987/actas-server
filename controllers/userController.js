@@ -34,5 +34,40 @@ const login =async(req,res)=>{
     }
 }
 
+//192.168.100.7:4000/api/user/crear-usuario
+const crearUsuario = async(req,res)=>{
 
-export {login}
+   console.log('en crear usuario')
+
+   const isUser = await User.findOne({email:req.body.email})
+   
+    if(isUser){
+        return res.status(409).json({msg:'Usuario ya Existe'})
+    }
+
+    try {
+        const newUser = new User(req.body)
+        const data = await newUser.save()
+        res.status(201).json(data)
+    } catch (error) {
+
+        if (error.name === "ValidationError") {
+            let errors = {};
+      
+            Object.keys(error.errors).forEach((key) => {
+              errors[key] = error.errors[key].message;
+            });
+      
+            return res.status(400).send(errors);
+          }
+          res.status(500).send("Something went wrong");
+        }
+    
+
+}
+
+
+export {
+    login,
+    crearUsuario
+}

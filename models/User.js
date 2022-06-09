@@ -3,15 +3,17 @@ const {Schema} = mongoose
 
 const userSchema = new Schema({
     name:{
-        type:String
+        type:String,
+        required:[true,'nombre es obligatorio']
     },
     email:{
         type:String,
-        unique:true
+        unique:true,
+        required:[true,'email es obligatorio']
     },
     password:{
         type:String,
-        required:true
+        required:[true,'password obligatorio']
     },
     role:{
         type:String,
