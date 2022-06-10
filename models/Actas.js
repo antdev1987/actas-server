@@ -12,7 +12,9 @@ const actaSchema = new Schema({
         // required:[true,'nombre usuarios es obligatorio']
     },
 
-    entrega:[{}]
+    entrega:[{type:Object}],
+
+    devolucion:[{type:Object}]
 })
 
 const Actas = mongoose.model("Actas",actaSchema)

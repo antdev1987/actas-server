@@ -2,7 +2,9 @@ import express from 'express'
 const router = express.Router()
 
 import {
-    guardarArchivos
+    guardarArchivos,
+    crearFolder,
+    buscarFolder
 } from '../controllers/actasController.js'
 
 
@@ -32,7 +34,9 @@ destination: function (req, file, cb) {
 var upload = multer({ storage: storage })
 
 //api/actas/guardar-archivos
-router.post('/guardar-archivos',upload.array('myFiles',2), guardarArchivos)
+router.post('/guardar-archivos/:id',upload.array('myFiles',2), guardarArchivos)
 
 
+router.post('/crear-folder' , crearFolder)
+router.post('/buscar-folder',buscarFolder)
 export default router

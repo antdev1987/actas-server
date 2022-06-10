@@ -13,7 +13,7 @@ import
 } from '../controllers/userController.js'
 
 //api/user/login
-router.get('/login',login)
+router.post('/login',login)
 
 //api/user/crear-usuario
 router.post('/crear-usuario', checkAuth, isAdmin,crearUsuario)

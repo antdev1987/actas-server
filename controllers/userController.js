@@ -2,6 +2,7 @@ import generarJWT from "../helpers/generarJWT.js";
 import User from "../models/User.js";
 
 //192.168.100.7:4000/api/user/login
+
 const login = async (req, res) => {
   //obtengo los datos de la pagina login de react
   const { email, password } = req.body;
@@ -23,7 +24,7 @@ const login = async (req, res) => {
 
     //si todo sale bien envio los datos de abajo a react para la autenticacion
     res.json({
-      nombre: usuario.name,
+      name: usuario.name,
       role: usuario.role,
       token: generarJWT(usuario._id),
     });
