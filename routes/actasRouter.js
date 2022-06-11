@@ -1,6 +1,8 @@
 import express from 'express'
 const router = express.Router()
 
+import checkAuth from '../middleware/checkAuth.js'
+
 import {
     guardarArchivos,
     crearFolder,
@@ -10,17 +12,6 @@ import {
 
 import multer from 'multer'
 
-// var storage = multer.diskStorage({
-//     destination: function (req, file, callback) {
-//       callback(null, './uploads');
-//     },
-//     filename: function (req, file, callback) {
-//       callback(null, file.fieldname + '-' + Date.now());
-//     }
-//   });
-
-
-//   var upload = multer({ storage : storage }).array('userPhoto',2);
 
 var storage = multer.diskStorage({
 destination: function (req, file, cb) {
@@ -34,9 +25,9 @@ destination: function (req, file, cb) {
 var upload = multer({ storage: storage })
 
 //api/actas/guardar-archivos
-router.post('/guardar-archivos/:id',upload.array('myFiles',2), guardarArchivos)
+router.post('/guardar-archivos/:id',checkAuth,upload.array('myFiles',5), guardarArchivos)
 
 
-router.post('/crear-folder' , crearFolder)
-router.post('/buscar-folder',buscarFolder)
+router.post('/crear-folder' ,checkAuth, crearFolder)
+router.post('/buscar-folder',checkAuth,buscarFolder)
 export default router
