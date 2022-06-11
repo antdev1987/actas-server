@@ -1,7 +1,6 @@
 node_modules/
 build
 npm-debug.log
-uploads/*
-!.uploads/readmee.txt
+
 .env
 .DS_Store
