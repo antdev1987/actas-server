@@ -14,7 +14,9 @@ const actaSchema = new Schema({
 
     entrega:[{type:Object}],
 
-    devolucion:[{type:Object}]
+    devolucion:[{type:Object}],
+
+    calendario:[{type:Object}]
 })
 
 const Actas = mongoose.model("Actas",actaSchema)

@@ -2,5 +2,6 @@ node_modules/
 build
 npm-debug.log
 uploads/*
+!.uploads/readme.txt
 .env
 .DS_Store

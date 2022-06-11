@@ -26,6 +26,9 @@ const crearFolder = async(req,res)=>{
 //192.168.100.7:4000/api/actas/buscar-folder
 const buscarFolder = async(req,res)=>{
 
+    console.log('en buscar folder')
+    console.log(req.body)
+
     try {
 
         const isFolder = await Actas.findOne({nombre:req.body.nombre})
@@ -42,12 +45,21 @@ const buscarFolder = async(req,res)=>{
 
 }
 
-//192.168.100.7:4000/api/actas/guardar-archivos
+//192.168.100.7:4000/api/actas/guardar-archivos/someid
 const guardarArchivos=  async(req,res)=>{
 
     console.log('ejecutandose')
 
     const {id} = req.params
+
+    console.log(id)
+    console.log(typeof id)
+
+    console.log(req.body)
+
+    console.log(req.files)
+
+    try {
 
     const isFolder = await Actas.findById(id)
 
@@ -70,7 +82,7 @@ const guardarArchivos=  async(req,res)=>{
         isFolder[selector].push(item)
     }
 
-    try {
+    // try {
         const dataUp =await isFolder.save()
         res.json(dataUp)
     } catch (error) {
