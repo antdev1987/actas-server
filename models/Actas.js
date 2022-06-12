@@ -1,9 +1,6 @@
 import mongoose from 'mongoose'
 const {Schema} =mongoose
 
-// const Entrega = new Schema({
-//     title:String
-// })
 
 const actaSchema = new Schema({
     nombre:{
