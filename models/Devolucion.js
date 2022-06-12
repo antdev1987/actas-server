@@ -9,6 +9,11 @@ const devolucionSchema = new Schema({
         // required:[true,'nombre usuarios es obligatorio']
     },
 
+    tipo:{
+        type:String,
+        default:'devolucion' 
+    },
+
     files:[{type:Object}],
 })
 

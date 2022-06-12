@@ -9,6 +9,11 @@ const entregaSchema = new Schema({
         // required:[true,'nombre usuarios es obligatorio']
     },
 
+    tipo:{
+        type:String,
+        default:'entrega' 
+    },
+
     files:[{type:Object}],
 })
 

@@ -1,123 +1,112 @@
-import Actas from "../models/Actas.js"
-import Entrega from '../models/Entrega.js'
-import Devolucion from '../models/Devolucion.js'
+import Actas from "../models/Actas.js";
+import Entrega from "../models/Entrega.js";
+import Devolucion from "../models/Devolucion.js";
 
 //192.168.100.7:4000/api/actas/crear-folder
-const crearFolder = async(req,res)=>{
-    console.log('en crear folder')
+const crearFolder = async (req, res) => {
+  console.log("en crear folder");
 
-    const {selector} = req.body
+  const { selector } = req.body;
 
-    let pick
+  let pickSelector;
 
-    if(selector === 'Entrega'){
-        pick = Entrega
-    }else if(selector === 'Devolucion'){
-        pick = Devolucion
-    }
+  if (selector === "Entrega") {
+    pickSelector = Entrega;
+  } else if (selector === "Devolucion") {
+    pickSelector = Devolucion;
+  }
 
-    const isNewFolder = await pick.findOne({nombre:req.body.nombre})
+  const isNewFolder = await pickSelector.findOne({ nombre: req.body.nombre });
 
+  if (isNewFolder) {
+    return res.json({ msg: "nombre ya creado" });
+  }
 
-    
-    if(isNewFolder){
-        return res.json({msg:'nombre ya creado'})
-    }
+  try {
+    const newFolder = new pickSelector(req.body);
+    const data = await newFolder.save();
 
-    try {
-        const newFolder = new pick(req.body)
-        const data = await newFolder.save()
-
-        res.json(data)
-
-    } catch (error) {
-        console.log(error)
-    }
-
-}
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 //192.168.100.7:4000/api/actas/buscar-folder
-const buscarFolder = async(req,res)=>{
+const buscarFolder = async (req, res) => {
+  console.log("en buscar folder");
 
-    console.log('en buscar folder')
+  try {
+    const { selector } = req.body;
 
-    try {
+    let pickSelector;
 
-        const {selector} = req.body
-
-        let pick;
-
-        if(selector === 'Entrega'){
-            pick = Entrega
-        }else if(selector === 'Devolucion'){
-            pick = Devolucion
-        }
-
-        const isFolder = await pick.findOne({nombre:req.body.nombre})
-
-        if(!isFolder){
-            return res.json({msg:'folder no encontrado, crealo'})
-        }
-
-        res.json(isFolder)
-        
-    } catch (error) {
-        console.log(error)
+    if (selector === "Entrega") {
+      pickSelector = Entrega;
+    } else if (selector === "Devolucion") {
+      pickSelector = Devolucion;
     }
 
-}
+    const isFolder = await pickSelector.findOne({ nombre: req.body.nombre });
+
+    if (!isFolder) {
+      return res.json({ msg: "folder no encontrado, crealo" });
+    }
+
+    res.json(isFolder);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 //192.168.100.7:4000/api/actas/guardar-archivos/someid
-const guardarArchivos=  async(req,res)=>{
+const guardarArchivos = async (req, res) => {
+  console.log("ejecutandose");
 
-    console.log('ejecutandose')
+  const { id } = req.params;
 
-    const {id} = req.params
+  console.log(id);
+  console.log(typeof id);
 
-    console.log(id)
-    console.log(typeof id)
+  console.log(req.body);
+  const selector = req.body.selector;
+  let pickSelector;
 
-    console.log(req.body)
+  if (selector === "Entrega") {
+    pickSelector = Entrega;
+  } else if (selector === "Devolucion") {
+    pickSelector = Devolucion;
+  }
 
-    console.log(req.files)
+  console.log(req.files);
 
-    try {
+  try {
+    const isFolder = await pickSelector.findById(id);
 
-    const isFolder = await Actas.findById(id)
-
-    if(!isFolder){
-        return res.json({msg:'folder no existe'})
+    if (!isFolder) {
+      return res.json({ msg: "folder no existe" });
     }
 
-    const selector = req.body.selector
 
-    const newArr = []
+
+    const newArr = [];
 
     for (const item of req.files) {
-        const { filename, originalname } = item;
-        newArr.push({ filename, originalname });
-      }
-  
+      const { filename, originalname } = item;
+      newArr.push({ filename, originalname });
+    }
 
     //almacenar los archivos a la instancia
     for (const item of newArr) {
-        isFolder[selector].push(item)
+      isFolder.files.push(item);
     }
 
     // try {
-        const dataUp =await isFolder.save()
-        res.json(dataUp)
-    } catch (error) {
-        console.log(error)
-    }
-    
-}
+    const dataUp = await isFolder.save();
+    res.json(dataUp);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-
-
-
-export{
-    guardarArchivos,
-    crearFolder,
-    buscarFolder
-}
+export { guardarArchivos, crearFolder, buscarFolder };
