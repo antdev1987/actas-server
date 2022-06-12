@@ -1,18 +1,31 @@
 import Actas from "../models/Actas.js"
-
+import Entrega from '../models/Entrega.js'
+import Devolucion from '../models/Devolucion.js'
 
 //192.168.100.7:4000/api/actas/crear-folder
 const crearFolder = async(req,res)=>{
     console.log('en crear folder')
 
-    const isNewFolder = await Actas.findOne({nombre:req.body.nombre})
+    const {selector} = req.body
 
+    let pick
+
+    if(selector === 'Entrega'){
+        pick = Entrega
+    }else if(selector === 'Devolucion'){
+        pick = Devolucion
+    }
+
+    const isNewFolder = await pick.findOne({nombre:req.body.nombre})
+
+
+    
     if(isNewFolder){
         return res.json({msg:'nombre ya creado'})
     }
 
     try {
-        const newFolder = new Actas(req.body)
+        const newFolder = new pick(req.body)
         const data = await newFolder.save()
 
         res.json(data)
@@ -30,7 +43,17 @@ const buscarFolder = async(req,res)=>{
 
     try {
 
-        const isFolder = await Actas.findOne({nombre:req.body.nombre})
+        const {selector} = req.body
+
+        let pick;
+
+        if(selector === 'Entrega'){
+            pick = Entrega
+        }else if(selector === 'Devolucion'){
+            pick = Devolucion
+        }
+
+        const isFolder = await pick.findOne({nombre:req.body.nombre})
 
         if(!isFolder){
             return res.json({msg:'folder no encontrado, crealo'})
