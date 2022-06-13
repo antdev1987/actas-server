@@ -1,33 +1,37 @@
 import express from 'express'
 const router = express.Router()
+import multer from 'multer'
 
 import checkAuth from '../middleware/checkAuth.js'
 
 import {
     guardarArchivos,
     crearFolder,
-    buscarFolder
+    buscarFolder,
+    eliminarUnArchivo
 } from '../controllers/actasController.js'
 
 
-import multer from 'multer'
 
 
-var storage = multer.diskStorage({
-destination: function (req, file, cb) {
-    cb(null, 'uploads')
-  },
+const upload = multer({
+  storage:multer.diskStorage({}),
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + file.originalname )
+    cb(null, file.originalname )
   }
-})
+}).array('myFiles')
  
-var upload = multer({ storage: storage })
 
 //api/actas/guardar-archivos
-router.post('/guardar-archivos/:id',checkAuth,upload.array('myFiles',5), guardarArchivos)
+router.post('/guardar-archivos/:id',checkAuth,upload, guardarArchivos)
 
-
+//192.168.100.7:4000/api/actas/crear-folder
 router.post('/crear-folder' ,checkAuth, crearFolder)
+//192.168.100.7:4000/api/actas/buscar-folder
 router.post('/buscar-folder',checkAuth,buscarFolder)
+
+//192.168.100.7:4000/api/actas/eliminar-un-archivo
+router.delete('/eliminar-un-archivo',checkAuth,eliminarUnArchivo)
+
+
 export default router

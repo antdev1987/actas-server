@@ -1,6 +1,7 @@
 import Actas from "../models/Actas.js";
 import Entrega from "../models/Entrega.js";
 import Devolucion from "../models/Devolucion.js";
+import cloudinary from "../utils/cloudinary.js";
 
 //192.168.100.7:4000/api/actas/crear-folder
 const crearFolder = async (req, res) => {
@@ -36,7 +37,7 @@ const crearFolder = async (req, res) => {
 const buscarFolder = async (req, res) => {
   console.log("en buscar folder");
 
-  console.log(req.body)
+  console.log(req.body);
 
   try {
     const { selector } = req.body;
@@ -63,52 +64,101 @@ const buscarFolder = async (req, res) => {
 
 //192.168.100.7:4000/api/actas/guardar-archivos/someid
 const guardarArchivos = async (req, res) => {
-  console.log("ejecutandose");
+  console.log("en guardar archivos");
+
+  
 
   const { id } = req.params;
-
-  console.log(id);
-  console.log(typeof id);
-
-  console.log(req.body);
-  const selector = req.body.selector;
   let pickSelector;
 
+  //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
+  const {selector} = req.body;
   if (selector === "Entrega") {
     pickSelector = Entrega;
   } else if (selector === "Devolucion") {
     pickSelector = Devolucion;
   }
 
-  console.log(req.files);
+  //next block code: solo es extra seguridad si el folder no existe no sigue adelante
+  //igualmente en el frontend no se podra seguir adelante si no existe el folder
+  const isFolder = await pickSelector.findById(id);
+  if (!isFolder) {
+    return res.json({ msg: "folder no existe" });
+  }
 
   try {
-    const isFolder = await pickSelector.findById(id);
 
-    if (!isFolder) {
-      return res.json({ msg: "folder no existe" });
+    //next block code: guarda los archivos al servidor, crear los valores necesarios para agregarlos a la bd
+    const urls = [];
+    for (const file of req.files) {
+      const { path } = file;
+      const result = await cloudinary.uploader.upload(path, {
+        resource_type: "raw",
+        filename_override: file.originalname,
+      });
+      console.log(result)
+      const newPath = {
+        public_id: result.public_id,
+        secure_url: result.secure_url,
+        originalname: file.originalname,
+      };
+      urls.push(newPath);
     }
 
-
-
-    const newArr = [];
-
-    for (const item of req.files) {
-      const { filename, originalname } = item;
-      newArr.push({ filename, originalname });
-    }
 
     //almacenar los archivos a la instancia
-    for (const item of newArr) {
+    for (const item of urls) {
       isFolder.files.push(item);
     }
 
-    // try {
-    const dataUp = await isFolder.save();
-    res.json(dataUp);
+    const dataSaved = await isFolder.save();
+    res.json(dataSaved);
   } catch (error) {
-    console.log(error);
+    console.log('error en el try catch',error);
   }
 };
 
-export { guardarArchivos, crearFolder, buscarFolder };
+
+//192.168.100.7:4000/api/actas/eliminar-un-archivo
+const eliminarUnArchivo = async(req,res)=>{
+
+  console.log('en eliminar folder')
+  const {id,selector,public_id} = req.query
+
+
+  //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
+  let pickSelector;
+  if (selector === "Entrega") {
+    pickSelector = Entrega;
+  } else if (selector === "Devolucion") {
+    pickSelector = Devolucion;
+  }
+
+  //next block code: solo es extra seguridad si el folder no existe no sigue adelante
+  //igualmente en el frontend no se podra seguir adelante si no existe el folder
+  const isFolder = await pickSelector.findById(id);
+  if (!isFolder) {
+    return res.json({ msg: "folder no existe" });
+  }
+
+  try {
+
+    //to delete the file from cloudinary
+    await cloudinary.uploader.destroy(public_id,{resource_type:'raw'})
+
+    //to delete the references to the id file in cloudinary from mongodb,
+    //the reference it is inside an array of object
+    await pickSelector.updateOne({_id:id},{"$pull":{"files":{"public_id":public_id}}})
+
+    res.json({msg:'deleted'})
+    
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+
+
+
+export { guardarArchivos, crearFolder, buscarFolder, eliminarUnArchivo };
