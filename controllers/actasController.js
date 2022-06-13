@@ -36,6 +36,8 @@ const crearFolder = async (req, res) => {
 const buscarFolder = async (req, res) => {
   console.log("en buscar folder");
 
+  console.log(req.body)
+
   try {
     const { selector } = req.body;
 
