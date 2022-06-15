@@ -17,13 +17,13 @@ const crearFolder = async (req, res) => {
     pickSelector = Devolucion;
   }
 
+  try {
   const isNewFolder = await pickSelector.findOne({ nombre: req.body.nombre });
 
   if (isNewFolder) {
     return res.json({ msg: "nombre ya creado" });
   }
 
-  try {
     const newFolder = new pickSelector(req.body);
     const data = await newFolder.save();
 
@@ -158,7 +158,28 @@ const eliminarUnArchivo = async(req,res)=>{
 
 }
 
+//192.168.100.7:4000/api/actas/obtener-bds
+const obtenerBds = async(req,res)=>{
+
+  console.log('en obtener bds')
+
+  try {
+
+    const entrega = await Entrega.find()
+    const devolucion = await Devolucion.find()
+
+    res.json({
+      entrega,
+      devolucion
+    })
+    
+  } catch (error) {
+    console.log(error)
+  }
+
+}
 
 
 
-export { guardarArchivos, crearFolder, buscarFolder, eliminarUnArchivo };
+
+export { guardarArchivos, crearFolder, buscarFolder, eliminarUnArchivo,obtenerBds };

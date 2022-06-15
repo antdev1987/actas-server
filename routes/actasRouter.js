@@ -8,7 +8,8 @@ import {
     guardarArchivos,
     crearFolder,
     buscarFolder,
-    eliminarUnArchivo
+    eliminarUnArchivo,
+    obtenerBds
 } from '../controllers/actasController.js'
 
 
@@ -29,6 +30,9 @@ router.post('/guardar-archivos/:id',checkAuth,upload, guardarArchivos)
 router.post('/crear-folder' ,checkAuth, crearFolder)
 //192.168.100.7:4000/api/actas/buscar-folder
 router.post('/buscar-folder',checkAuth,buscarFolder)
+
+//192.168.100.7:4000/api/actas/obtener-bds
+router.get('/obtener-bds',checkAuth,obtenerBds)
 
 //192.168.100.7:4000/api/actas/eliminar-un-archivo
 router.delete('/eliminar-un-archivo',checkAuth,eliminarUnArchivo)
