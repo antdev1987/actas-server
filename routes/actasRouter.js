@@ -9,7 +9,9 @@ import {
     crearFolder,
     buscarFolder,
     eliminarUnArchivo,
-    obtenerBds
+    obtenerBds,
+    eliminarFolder,
+    buscarNombre
 } from '../controllers/actasController.js'
 
 
@@ -36,6 +38,12 @@ router.get('/obtener-bds',checkAuth,obtenerBds)
 
 //192.168.100.7:4000/api/actas/eliminar-un-archivo
 router.delete('/eliminar-un-archivo',checkAuth,eliminarUnArchivo)
+
+//192.168.100.7:4000/api/actas/eliminar-folder
+router.delete('/eliminar-folder',checkAuth, eliminarFolder)
+
+//192.168.100.7:4000/api/actas/bscar-nombre
+router.get('/buscar-nombre',checkAuth, buscarNombre)
 
 
 export default router

@@ -119,11 +119,52 @@ const guardarArchivos = async (req, res) => {
 };
 
 
+
+
 //192.168.100.7:4000/api/actas/eliminar-un-archivo
 const eliminarUnArchivo = async(req,res)=>{
 
-  console.log('en eliminar folder')
+  console.log('en eliminar archivo')
   const {id,selector,public_id} = req.query
+
+
+  //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
+  let pickSelector;
+  if (selector === "Entrega") {
+    pickSelector = Entrega;
+  } else if (selector === "Devolucion") {
+    pickSelector = Devolucion;
+  }
+
+  //next block code: solo es extra seguridad si el folder no existe no sigue adelante
+  //igualmente en el frontend no se podra seguir adelante si no existe el folder
+  try {
+  const isFolder = await pickSelector.findById(id);
+  if (!isFolder) {
+    return res.json({ msg: "archivo no existe" });
+  }
+
+
+    //to delete the file from cloudinary
+    await cloudinary.uploader.destroy(public_id,{resource_type:'raw'})
+
+    //to delete the references to the id file in cloudinary from mongodb,
+    //the reference it is inside an array of object
+    const data = await pickSelector.findByIdAndUpdate({_id:id},{"$pull":{"files":{"public_id":public_id}}},{new:true})
+
+    res.json(data)
+    
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+
+const eliminarFolder = async(req,res)=>{
+
+  console.log('en eliminar folder')
+  const {id,selector} = req.query
 
 
   //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
@@ -141,16 +182,31 @@ const eliminarUnArchivo = async(req,res)=>{
     return res.json({ msg: "folder no existe" });
   }
 
+  
+  const {files} =  isFolder
+  console.log(files)
+  const ids = []
+
+
+  
   try {
 
     //to delete the file from cloudinary
-    await cloudinary.uploader.destroy(public_id,{resource_type:'raw'})
+
+    for (const item of isFolder.files) {
+
+      
+      await cloudinary.uploader.destroy(item.public_id,{resource_type:'raw'})
+      
+    }
+
 
     //to delete the references to the id file in cloudinary from mongodb,
     //the reference it is inside an array of object
-    await pickSelector.updateOne({_id:id},{"$pull":{"files":{"public_id":public_id}}})
+    // await pickSelector.updateOne({_id:id},{"$pull":{"files":{"public_id":public_id}}})
 
-    res.json({msg:'deleted'})
+    await isFolder.remove()
+    res.json({msg:'folder deleted'})
     
   } catch (error) {
     console.log(error)
@@ -180,6 +236,38 @@ const obtenerBds = async(req,res)=>{
 }
 
 
+const buscarNombre = async(req,res)=>{
+
+  console.log('en eliminar folder')
+  const {nombre,selector} = req.query
 
 
-export { guardarArchivos, crearFolder, buscarFolder, eliminarUnArchivo,obtenerBds };
+  //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
+  let pickSelector;
+  if (selector === "Entrega") {
+    pickSelector = Entrega;
+  } else if (selector === "Devolucion") {
+    pickSelector = Devolucion;
+  }
+
+  //next block code: solo es extra seguridad si el folder no existe no sigue adelante
+  //igualmente en el frontend no se podra seguir adelante si no existe el folder
+  
+  try {
+    const isFolder = await pickSelector.find({nombre:{$regex:nombre}});
+    if (!isFolder) {
+      return res.json({ msg: "folder no existe" });
+    }
+
+    res.json(isFolder)
+    
+  } catch (error) {
+    console.log(error)
+  }
+
+
+
+}
+
+
+export { guardarArchivos, crearFolder, buscarFolder, eliminarUnArchivo,obtenerBds,eliminarFolder,buscarNombre };

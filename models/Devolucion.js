@@ -11,7 +11,7 @@ const devolucionSchema = new Schema({
 
     tipo:{
         type:String,
-        default:'devolucion' 
+        default:'Devolucion' 
     },
 
     files:[{type:Object}],

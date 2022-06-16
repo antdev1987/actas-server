@@ -11,7 +11,7 @@ const entregaSchema = new Schema({
 
     tipo:{
         type:String,
-        default:'entrega' 
+        default:'Entrega' 
     },
 
     files:[{type:Object}],
