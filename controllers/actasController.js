@@ -95,6 +95,9 @@ const guardarArchivos = async (req, res) => {
       const result = await cloudinary.uploader.upload(path, {
         resource_type: "raw",
         filename_override: file.originalname,
+        use_filename:true,
+        unique_filename:false,
+        folder:isFolder.nombre
       });
       console.log(result)
       const newPath = {
@@ -146,7 +149,7 @@ const eliminarUnArchivo = async(req,res)=>{
 
 
     //to delete the file from cloudinary
-    await cloudinary.uploader.destroy(public_id,{resource_type:'raw'})
+    await cloudinary.uploader.destroy(public_id,{resource_type:'raw',folder:isFolder.nombre})
 
     //to delete the references to the id file in cloudinary from mongodb,
     //the reference it is inside an array of object
@@ -161,6 +164,8 @@ const eliminarUnArchivo = async(req,res)=>{
 }
 
 
+
+//eliminar folder
 const eliminarFolder = async(req,res)=>{
 
   console.log('en eliminar folder')
@@ -194,11 +199,11 @@ const eliminarFolder = async(req,res)=>{
     //to delete the file from cloudinary
 
     for (const item of isFolder.files) {
-
-      
-      await cloudinary.uploader.destroy(item.public_id,{resource_type:'raw'})
-      
+      await cloudinary.uploader.destroy(item.public_id,{resource_type:'raw',folder:isFolder.nombre})
     }
+
+    //this delete the folder from cloudinary
+    await cloudinary.api.delete_folder(isFolder.nombre)
 
 
     //to delete the references to the id file in cloudinary from mongodb,
