@@ -97,7 +97,7 @@ const guardarArchivos = async (req, res) => {
         filename_override: file.originalname,
         use_filename:true,
         unique_filename:false,
-        folder:isFolder.nombre
+        folder:`actas/${isFolder.nombre}`
       });
       console.log(result)
       const newPath = {
@@ -199,11 +199,11 @@ const eliminarFolder = async(req,res)=>{
     //to delete the file from cloudinary
 
     for (const item of isFolder.files) {
-      await cloudinary.uploader.destroy(item.public_id,{resource_type:'raw',folder:isFolder.nombre})
+      await cloudinary.uploader.destroy(item.public_id,{resource_type:'raw'})
     }
 
     //this delete the folder from cloudinary
-    await cloudinary.api.delete_folder(isFolder.nombre)
+    await cloudinary.api.delete_folder(`actas/${isFolder.nombre}`)
 
 
     //to delete the references to the id file in cloudinary from mongodb,

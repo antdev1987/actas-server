@@ -16,7 +16,7 @@ import {
 
 
 
-
+//este midleware the express es para cargar los archivos enviados del frontend
 const upload = multer({
   storage:multer.diskStorage({}),
   filename: function (req, file, cb) {
