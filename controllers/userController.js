@@ -1,4 +1,5 @@
 import generarJWT from "../helpers/generarJWT.js";
+import obtenerFecha from "../helpers/obtenerFecha.js";
 import User from "../models/User.js";
 
 //192.168.100.7:4000/api/user/login
@@ -22,20 +23,11 @@ const login = async (req, res) => {
       return res.status(403).json({ msg: "El password es incorrecto" });
     }
 
-    const d_t = new Date();
+    const fullYear = obtenerFecha()
+    const movimiento = {type:'Login',accion:'Login de Usuario', fecha:fullYear}
+    usuario.movimientos.unshift(movimiento)
 
-    let year = d_t.getFullYear();
-    let month = ("0" + (d_t.getMonth() + 1)).slice(-2);
-    let day = ("0" + d_t.getDate()).slice(-2);
-    let hour = d_t.getHours();
-    let minute = d_t.getMinutes();
-    let seconds = d_t.getSeconds();
-
-    // prints date & time in YYYY-MM-DD HH:MM:SS format
-    const fullyear = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + seconds
-    console.log(fullyear);
-
-    usuario.lastLogin = fullyear || usuario.lastLogin
+    usuario.lastLogin = fullYear || usuario.lastLogin
 
     await usuario.save()
 
@@ -56,7 +48,7 @@ const todosUsuarios = async(req,res)=>{
 
   try {
 
-    const usuarios = await User.find({}).sort({lastLogin:-1})
+    const usuarios = await User.find({}).sort({lastLogin:-1}).select(' email lastLogin movimientos')
 
     res.json(usuarios)
     
@@ -79,8 +71,14 @@ const crearUsuario = async (req, res) => {
 
   try {
     const newUser = new User(req.body);
+    const fullYear = obtenerFecha()
+    const movimiento = {type:'crear', accion:`usuario ${req.user.email} ha creado a usuario ${newUser.email}`, fecha:fullYear}
+    req.user.movimientos.unshift(movimiento)
+    await req.user.save()
+
     const data = await newUser.save();
     res.status(201).json(data);
+
   } catch (error) {
     if (error.name === "ValidationError") {
       let errors = {};
@@ -113,7 +111,14 @@ const eliminarUsuario = async (req, res) => {
   const { id } = req.params
 
   try {
-    await User.deleteOne({ _id: id })
+    const userDeleted = await User.findOneAndRemove({ _id: id })
+    const fullYear = obtenerFecha()
+    const movimiento = {type:'eliminar', accion:`usuario ${req.user.email} ha eliminado a usuario ${userDeleted.email}`, fecha:fullYear}
+
+    req.user.movimientos.unshift(movimiento)
+
+    req.user.save()
+
     res.json({ msg: 'Usuario eliminado' })
   } catch (error) {
     console.log(error)

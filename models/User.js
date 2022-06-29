@@ -21,7 +21,8 @@ const userSchema = new Schema({
     },
     lastLogin:{
         type:String
-    }
+    },
+    movimientos:[{type:Object}]
 
 })
 
