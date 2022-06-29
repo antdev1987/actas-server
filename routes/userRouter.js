@@ -9,7 +9,8 @@ import
     login,
     crearUsuario,
     verUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    todosUsuarios
 } from '../controllers/userController.js'
 
 //api/user/login
@@ -21,5 +22,8 @@ router.post('/crear-usuario', checkAuth, isAdmin,crearUsuario)
 router.get('/ver-usuario',checkAuth, isAdmin, verUsuario)
 //api/user/eliminar-usuario/id
 router.delete('/eliminar-usuario/:id',checkAuth,isAdmin,eliminarUsuario)
+
+
+router.get('/todos-usuarios',todosUsuarios)
 
 export default router

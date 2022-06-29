@@ -22,6 +22,23 @@ const login = async (req, res) => {
       return res.status(403).json({ msg: "El password es incorrecto" });
     }
 
+    const d_t = new Date();
+
+    let year = d_t.getFullYear();
+    let month = ("0" + (d_t.getMonth() + 1)).slice(-2);
+    let day = ("0" + d_t.getDate()).slice(-2);
+    let hour = d_t.getHours();
+    let minute = d_t.getMinutes();
+    let seconds = d_t.getSeconds();
+
+    // prints date & time in YYYY-MM-DD HH:MM:SS format
+    const fullyear = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + seconds
+    console.log(fullyear);
+
+    usuario.lastLogin = fullyear || usuario.lastLogin
+
+    await usuario.save()
+
     //si todo sale bien envio los datos de abajo a react para la autenticacion
     res.json({
       name: usuario.name,
@@ -32,6 +49,23 @@ const login = async (req, res) => {
     console.log(error);
   }
 };
+
+
+const todosUsuarios = async(req,res)=>{
+  console.log('en todos los usuarios')
+
+  try {
+
+    const usuarios = await User.find({}).sort({lastLogin:-1})
+
+    res.json(usuarios)
+    
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
 
 //192.168.100.7:4000/api/user/crear-usuario
 const crearUsuario = async (req, res) => {
@@ -66,24 +100,24 @@ const verUsuario = async (req, res) => {
   console.log("en ver usuario");
 
   try {
-      const users = await User.find()
-      res.json(users)
+    const users = await User.find()
+    res.json(users)
   } catch (error) {
-      console.log(error)
+    console.log(error)
   }
 };
 
 //192.168.100.7:4000/api/user/eliminar-usuario/id
-const eliminarUsuario = async(req,res)=>{
-    console.log('en eliminar usuario')
-    const {id}= req.params
+const eliminarUsuario = async (req, res) => {
+  console.log('en eliminar usuario')
+  const { id } = req.params
 
-    try {
-        await User.deleteOne({_id:id})
-        res.json({msg:'Usuario eliminado'})
-    } catch (error) {
-        console.log(error)
-    }
+  try {
+    await User.deleteOne({ _id: id })
+    res.json({ msg: 'Usuario eliminado' })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
-export { login, crearUsuario, verUsuario, eliminarUsuario };
+export { login, crearUsuario, verUsuario, eliminarUsuario,todosUsuarios };
