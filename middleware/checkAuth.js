@@ -18,7 +18,7 @@ const checkAuth = async(req,res,next)=>{
     }
 
     if(!token){
-        return res.status(401).json({msg:'Token no valido'})
+        return res.status(401).json({msg:'no hay token'})
     }
     next()
 }

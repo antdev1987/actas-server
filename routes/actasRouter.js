@@ -11,7 +11,7 @@ import {
     eliminarUnArchivo,
     obtenerBds,
     eliminarFolder,
-    buscarNombre
+    descargarArchivo
 } from '../controllers/actasController.js'
 
 
@@ -37,13 +37,17 @@ router.post('/buscar-folder',checkAuth,buscarFolder)
 router.get('/obtener-bds',checkAuth,obtenerBds)
 
 //192.168.100.7:4000/api/actas/eliminar-un-archivo
+router.get('/descargar-un-archivo',checkAuth,descargarArchivo)
+
+//192.168.100.7:4000/api/actas/eliminar-un-archivo
 router.delete('/eliminar-un-archivo',checkAuth,eliminarUnArchivo)
 
 //192.168.100.7:4000/api/actas/eliminar-folder
 router.delete('/eliminar-folder',checkAuth, eliminarFolder)
 
-//192.168.100.7:4000/api/actas/bscar-nombre
-router.get('/buscar-nombre',checkAuth, buscarNombre)
+
+//192.168.100.7:4000/api/actas/buscar-nombre
+// router.get('/buscar-nombre',checkAuth, buscarNombre)
 
 
 export default router

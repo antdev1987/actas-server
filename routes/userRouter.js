@@ -10,7 +10,7 @@ import
     crearUsuario,
     verUsuario,
     eliminarUsuario,
-    todosUsuarios
+    movimientosUsuarios
 } from '../controllers/userController.js'
 
 //api/user/login
@@ -24,6 +24,6 @@ router.get('/ver-usuario',checkAuth, isAdmin, verUsuario)
 router.delete('/eliminar-usuario/:id',checkAuth,isAdmin,eliminarUsuario)
 
 
-router.get('/todos-usuarios',todosUsuarios)
+router.get('/movimientos-usuarios',checkAuth,isAdmin, movimientosUsuarios)
 
 export default router

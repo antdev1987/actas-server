@@ -42,8 +42,8 @@ const login = async (req, res) => {
   }
 };
 
-
-const todosUsuarios = async(req,res)=>{
+//////////////////// 
+const movimientosUsuarios = async(req,res)=>{
   console.log('en todos los usuarios')
 
   try {
@@ -125,4 +125,4 @@ const eliminarUsuario = async (req, res) => {
   }
 }
 
-export { login, crearUsuario, verUsuario, eliminarUsuario,todosUsuarios };
+export { login, crearUsuario, verUsuario, eliminarUsuario,movimientosUsuarios };
