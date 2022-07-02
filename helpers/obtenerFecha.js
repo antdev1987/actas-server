@@ -10,7 +10,7 @@ const obtenerFecha = ()=>{
     let seconds = d_t.getSeconds();
 
     // prints date & time in YYYY-MM-DD HH:MM:SS format
-    const fullyear = day + "-" + month + "-" + year + " " + hour + ":" + minute + ":" + seconds
+    const fullyear = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + seconds
     return fullyear
 }
 
