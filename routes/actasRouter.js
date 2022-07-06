@@ -11,7 +11,10 @@ import {
     eliminarUnArchivo,
     obtenerBds,
     eliminarFolder,
-    descargarArchivo
+    descargarArchivo,
+    agregarEvento,
+    obtenerEventos,
+    eliminarEvento
 } from '../controllers/actasController.js'
 
 
@@ -45,6 +48,10 @@ router.delete('/eliminar-un-archivo',checkAuth,eliminarUnArchivo)
 //192.168.100.7:4000/api/actas/eliminar-folder
 router.delete('/eliminar-folder',checkAuth, eliminarFolder)
 
+
+router.post('/agregar-evento', agregarEvento)
+router.get('/obtener-eventos', obtenerEventos)
+router.delete('/eliminar-evento/:id',eliminarEvento)
 
 //192.168.100.7:4000/api/actas/buscar-nombre
 // router.get('/buscar-nombre',checkAuth, buscarNombre)

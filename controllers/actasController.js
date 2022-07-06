@@ -3,6 +3,7 @@ import Entrega from "../models/Entrega.js";
 import Devolucion from "../models/Devolucion.js";
 import cloudinary from "../utils/cloudinary.js";
 import obtenerFecha from "../helpers/obtenerFecha.js";
+import Eventos from "../models/Eventos.js";
 
 //////////////////192.168.100.7:4000/api/actas/crear-folder
 const crearFolder = async (req, res) => {
@@ -290,6 +291,58 @@ const obtenerBds = async (req, res) => {
 }
 
 
+//funciones de los eventos
+//agregar un nuevo evento
+const agregarEvento = async (req, res) => {
+
+  try {
+
+    const evento = new Eventos(req.body)
+
+    const dataSaved = await evento.save()
+
+    res.json(dataSaved)
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+//obtener los eventos
+
+const obtenerEventos = async (req, res) => {
+
+  try {
+
+    const eventos = await Eventos.find()
+
+    res.json(eventos)
+    
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+const eliminarEvento = async(req,res)=>{
+
+  const {id} = req.params
+
+  try {
+
+    await Eventos.findOneAndRemove({ _id: id })
+
+    res.json({msg:'evento eliminado'})
+
+    
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+
 // const buscarNombre = async (req, res) => {
 
 //   console.log('en buscar folder tipo 2')
@@ -321,4 +374,15 @@ const obtenerBds = async (req, res) => {
 // }
 
 
-export { guardarArchivos, crearFolder, buscarFolder, descargarArchivo, eliminarUnArchivo, obtenerBds, eliminarFolder };
+export {
+  guardarArchivos,
+  crearFolder,
+  buscarFolder,
+  descargarArchivo,
+  eliminarUnArchivo,
+  obtenerBds,
+  eliminarFolder,
+  agregarEvento,
+  obtenerEventos,
+  eliminarEvento
+};

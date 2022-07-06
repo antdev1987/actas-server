@@ -24,8 +24,8 @@ const login = async (req, res) => {
     }
 
     const fullYear = obtenerFecha()
-    const movimiento = {type:'Login',accion:'Login de Usuario', fecha:fullYear}
-    usuario.movimientos.unshift(movimiento)
+    // const movimiento = {type:'Login',accion:'Login de Usuario', fecha:fullYear}
+    // usuario.movimientos.unshift(movimiento)
 
     usuario.lastLogin = fullYear || usuario.lastLogin
 
@@ -35,6 +35,7 @@ const login = async (req, res) => {
     res.json({
       name: usuario.name,
       role: usuario.role,
+      email:usuario.email,
       token: generarJWT(usuario._id),
     });
   } catch (error) {
