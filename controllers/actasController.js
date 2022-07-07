@@ -34,6 +34,8 @@ const crearFolder = async (req, res) => {
     // aqui se crea una instancia de la base de datos
     const newFolder = new pickSelector(req.body);
 
+    //this help you to create the folder
+    await cloudinary.api.create_folder(`actas/${selector}/${req.body.nombre}`)
     /*
     siguientes lineas es para crear fecha y hora y controlar el movimiento que hace el usuario
     luego se guarda en la base de datos del usuario que esta haciendo los request
@@ -245,12 +247,12 @@ const eliminarFolder = async (req, res) => {
 
   try {
 
-    //to delete the file from cloudinary
+    //to delete the files from cloudinary first
     for (const item of isFolder.files) {
       await cloudinary.uploader.destroy(item.public_id, { resource_type: 'raw' })
     }
 
-    //this delete the folder from cloudinary
+    //this delete the folder from cloudinary after delete all files first in function above
     await cloudinary.api.delete_folder(`actas/${selector}/${isFolder.nombre}`)
 
     //esto es para controlar la fecha y hora de la eliminacion y registra el usuario que realizo la accion
@@ -265,7 +267,7 @@ const eliminarFolder = async (req, res) => {
     res.json({ msg: 'folder deleted' })
 
   } catch (error) {
-    console.log(error)
+    console.log(error,'error despues de eliminar forlder')
   }
 
 }
