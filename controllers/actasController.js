@@ -4,21 +4,17 @@ import Devolucion from "../models/Devolucion.js";
 import cloudinary from "../utils/cloudinary.js";
 import obtenerFecha from "../helpers/obtenerFecha.js";
 import Eventos from "../models/Eventos.js";
+import AdminFiles from "../models/AdminFiles.js";
+import selected from "../helpers/selected.js";
 
 //////////////////192.168.100.7:4000/api/actas/crear-folder
 const crearFolder = async (req, res) => {
   console.log("en crear folder");
-  /* 
-    codigo de abajo es para determinar el tipo de folder ya sea entrea o devolucion 
-    asi se podra guardar en la base de datos adecuada
-  */
+
   const { selector } = req.body;
-  let pickSelector;
-  if (selector === "Entrega") {
-    pickSelector = Entrega;
-  } else if (selector === "Devolucion") {
-    pickSelector = Devolucion;
-  }
+  //mas info en helpers: file: selected.js
+  let pickSelector = selected(selector)
+
 
   try {
 
@@ -58,17 +54,9 @@ const buscarFolder = async (req, res) => {
   console.log("en buscar folder");
 
   try {
-    /* 
-      codigo de abajo es para determinar el tipo de folder ya sea entrea o devolucion 
-      asi se podra guardar en la base de datos adecuada
-    */
+
     const { selector } = req.body;
-    let pickSelector;
-    if (selector === "Entrega") {
-      pickSelector = Entrega;
-    } else if (selector === "Devolucion") {
-      pickSelector = Devolucion;
-    }
+    let pickSelector = selected(selector)
 
     /*
     siguiente linea de codigo es para buscar el folder especificado en el frontend
@@ -91,15 +79,10 @@ const guardarArchivos = async (req, res) => {
   console.log("en guardar archivos");
 
   const { id } = req.params;
-  let pickSelector;
 
   //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
   const { selector } = req.body;
-  if (selector === "Entrega") {
-    pickSelector = Entrega;
-  } else if (selector === "Devolucion") {
-    pickSelector = Devolucion;
-  }
+  let pickSelector = selected(selector)
 
   //next block code: solo es extra seguridad si el folder no existe no sigue adelante
   //igualmente en el frontend no se podra seguir adelante si no existe el folder
@@ -140,7 +123,7 @@ const guardarArchivos = async (req, res) => {
     }
 
     const dataSaved = await isFolder.save();
-    res.json(dataSaved);
+    res.status(201).json(dataSaved);
   } catch (error) {
     console.log('error en el try catch', error);
   }
@@ -178,14 +161,8 @@ const eliminarUnArchivo = async (req, res) => {
   console.log('en eliminar archivo')
   const { id, selector, public_id } = req.query
 
-
   //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
-  let pickSelector;
-  if (selector === "Entrega") {
-    pickSelector = Entrega;
-  } else if (selector === "Devolucion") {
-    pickSelector = Devolucion;
-  }
+  let pickSelector = selected(selector)
 
   //next block code: solo es extra seguridad si el folder no existe no sigue adelante
   //igualmente en el frontend no se podra seguir adelante si no existe el folder
@@ -199,10 +176,8 @@ const eliminarUnArchivo = async (req, res) => {
     //to delete the file from cloudinary
     await cloudinary.uploader.destroy(public_id, { resource_type: 'raw', folder: isFolder.nombre })
 
-
+    //obitiene el nombre del archivo
     const fileName = public_id.split('/')[3]
-
-    console.log(fileName, 'aque pasa')
 
     const fullYear = obtenerFecha()
     const movimiento = { type: 'eliminar archivo', accion: `usuario ${req.user.email} ha eliminado el archivo ${fileName} tipo ${selector} en folder ${isFolder.nombre}`, fecha: fullYear }
@@ -230,13 +205,7 @@ const eliminarFolder = async (req, res) => {
   const { id, selector } = req.query
 
 
-  //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
-  let pickSelector;
-  if (selector === "Entrega") {
-    pickSelector = Entrega;
-  } else if (selector === "Devolucion") {
-    pickSelector = Devolucion;
-  }
+  let pickSelector = selected(selector)
 
   //next block code: solo es extra seguridad si el folder no existe no sigue adelante
   //igualmente en el frontend no se podra seguir adelante si no existe el folder
@@ -267,7 +236,7 @@ const eliminarFolder = async (req, res) => {
     res.json({ msg: 'folder deleted' })
 
   } catch (error) {
-    console.log(error,'error despues de eliminar forlder')
+    console.log(error, 'error despues de eliminar forlder')
   }
 
 }
@@ -293,7 +262,7 @@ const obtenerBds = async (req, res) => {
 }
 
 
-//funciones de los eventos
+/////////////funciones de los eventos
 //agregar un nuevo evento
 const agregarEvento = async (req, res) => {
 
@@ -303,7 +272,7 @@ const agregarEvento = async (req, res) => {
 
     const dataSaved = await evento.save()
 
-    res.json(dataSaved)
+    res.status(201).json(dataSaved)
 
   } catch (error) {
     console.log(error)
@@ -312,7 +281,6 @@ const agregarEvento = async (req, res) => {
 }
 
 //obtener los eventos
-
 const obtenerEventos = async (req, res) => {
 
   try {
@@ -320,24 +288,25 @@ const obtenerEventos = async (req, res) => {
     const eventos = await Eventos.find()
 
     res.json(eventos)
-    
+
   } catch (error) {
     console.log(error)
   }
 
 }
 
-const eliminarEvento = async(req,res)=>{
+//eliminar los eventos
+const eliminarEvento = async (req, res) => {
 
-  const {id} = req.params
+  const { id } = req.params
 
   try {
 
     await Eventos.findOneAndRemove({ _id: id })
 
-    res.json({msg:'evento eliminado'})
+    res.json({ msg: 'evento eliminado' })
 
-    
+
   } catch (error) {
     console.log(error)
   }
@@ -345,35 +314,118 @@ const eliminarEvento = async(req,res)=>{
 }
 
 
-// const buscarNombre = async (req, res) => {
+/////////////codigo para guardar archivo que el admin suba
+const guardarArchivosAdmin = async (req, res) => {
 
-//   console.log('en buscar folder tipo 2')
-//   const { nombre, selector } = req.query
+  console.log('en guardar archivos')
+
+  try {
+
+    //convierto un nuevo array de nombres para luego hacer un query
+    const busqueda = req.files.map(item => {
+      return item.originalname
+    })
+    /*aqui se hace el query en el array transformado para verficiar 
+    se alguno de los archivos que esta subiendo ya ha sido subido
+    */
+    const isArchivo = await AdminFiles.find({
+      'originalname': { $in: busqueda }
+    })
+    //en caso de que este intentando subir un archivo ya subido, no lo dejamos y mandamos un mensaje
+    if (isArchivo.length >= !0) {
+      res.json({ msg: 'Esta subiendo archivo que ya existe' })
+      return
+    }
+
+    const fullYear = obtenerFecha()
+    //next block code: guarda los archivos al servidor, crear los valores necesarios para agregarlos a la bd
+    const dataTransformed = [];
+    for (const file of req.files) {
+      const { path } = file;
+      const result = await cloudinary.uploader.upload(path, {
+        resource_type: "raw",
+        filename_override: file.originalname,
+        use_filename: true,
+        unique_filename: false,
+        folder: 'actas/AdminFiles'
+      });
+      console.log(result)
+      const newPath = {
+        public_id: result.public_id,
+        secure_url: result.secure_url,
+        originalname: file.originalname,
+      };
+      const movimiento = { type: 'guardar Archivo/s admin', accion: `El Administrador ${req.user.email} ha guardado el archivo ${file.originalname}`, fecha: fullYear }
+      req.user.movimientos.unshift(movimiento)
+      dataTransformed.push(newPath);
+    }
+
+    await req.user.save()
+
+    //este alamacenos varios datos a la vez
+    const newArchivo = await AdminFiles.insertMany(dataTransformed)
+
+    console.log(newArchivo)
+
+    res.status(201).json(newArchivo)
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}
 
 
-//   //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
-//   let pickSelector;
-//   if (selector === "Entrega") {
-//     pickSelector = Entrega;
-//   } else if (selector === "Devolucion") {
-//     pickSelector = Devolucion;
-//   }
+//codigo para eliminar archivo subido por el admin
 
-//   //next block code: solo es extra seguridad si el folder no existe no sigue adelante
-//   //igualmente en el frontend no se podra seguir adelante si no existe el folder
+const eliminarArchivoAdmin =async(req,res)=>{
 
-//   try {
-//     const isFolder = await pickSelector.find({ nombre: { $regex: nombre } });
-//     if (!isFolder) {
-//       return res.json({ msg: "folder no existe" });
-//     }
+  const {id,public_id} = req.query
 
-//     res.json(isFolder)
+  const isFolder = await AdminFiles.findById(id);
+  if (!isFolder) {
+    return res.json({ msg: "folder no existe" });
+  }
 
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+console.log(public_id)
+  try {
+
+      //to delete the file from cloudinary
+      await cloudinary.uploader.destroy(public_id, { resource_type: 'raw' })
+
+      //obitiene el nombre del archivo
+      const fileName = public_id.split('/')[2]
+  
+      const fullYear = obtenerFecha()
+      const movimiento = { type: 'eliminar archivo admin', accion: `El Administrador ${req.user.email} ha eliminado el archivo ${fileName} del folder Administrador`, fecha: fullYear }
+      req.user.movimientos.unshift(movimiento)
+      await req.user.save()
+  
+    
+
+    isFolder.remove()
+    res.json({msg:'folder ha sido removido'})
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+//obtener los archivos que el admin sube
+const obtenerArchivosAdmin = async(req,res)=>{
+
+  try {
+
+    const adminFiles = await AdminFiles.find()
+
+    res.json(adminFiles)
+    
+  } catch (error) {
+    console.log(error)
+  }
+
+}
 
 
 export {
@@ -386,5 +438,9 @@ export {
   eliminarFolder,
   agregarEvento,
   obtenerEventos,
-  eliminarEvento
+  eliminarEvento,
+
+  guardarArchivosAdmin,
+  eliminarArchivoAdmin,
+  obtenerArchivosAdmin
 };

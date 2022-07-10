@@ -14,7 +14,10 @@ import {
     descargarArchivo,
     agregarEvento,
     obtenerEventos,
-    eliminarEvento
+    eliminarEvento,
+    guardarArchivosAdmin,
+    eliminarArchivoAdmin,
+    obtenerArchivosAdmin
 } from '../controllers/actasController.js'
 
 
@@ -53,8 +56,10 @@ router.post('/agregar-evento', agregarEvento)
 router.get('/obtener-eventos', obtenerEventos)
 router.delete('/eliminar-evento/:id',eliminarEvento)
 
-//192.168.100.7:4000/api/actas/buscar-nombre
-// router.get('/buscar-nombre',checkAuth, buscarNombre)
 
+//localhost:4000/api/actas/
+router.post('/guardar-archivos-admin',checkAuth, upload, guardarArchivosAdmin)
+router.delete('/eliminar-archivo-admin',checkAuth,eliminarArchivoAdmin)
+router.get('/obtener-archivos-admin', checkAuth,obtenerArchivosAdmin)
 
 export default router

@@ -23,7 +23,10 @@ router.get('/ver-usuario',checkAuth, isAdmin, verUsuario)
 //api/user/eliminar-usuario/id
 router.delete('/eliminar-usuario/:id',checkAuth,isAdmin,eliminarUsuario)
 
-
+//api/user/movimientos-usuarios
+//este router se utiliza para registrar los movimientos de los usuarios
 router.get('/movimientos-usuarios',checkAuth,isAdmin, movimientosUsuarios)
+
+
 
 export default router
