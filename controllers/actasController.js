@@ -142,7 +142,7 @@ const descargarArchivo = async (req, res) => {
   try {
 
     const fullYear = obtenerFecha()
-    const movimiento = { type: 'descargar archivo', accion: `usuario ${req.user.email} ha descargado el archivo ${originalName} tipo ${tipo} en folder ${nombre}`, fecha: fullYear }
+    const movimiento = { type: 'descargar archivo', accion: `usuario ${req.user.email} ha descargado el archivo ${originalName} tipo ${tipo ?? 'admin'} en folder ${nombre ?? 'admin'}`, fecha: fullYear }
     req.user.movimientos.unshift(movimiento)
     await req.user.save()
 
@@ -378,33 +378,33 @@ const guardarArchivosAdmin = async (req, res) => {
 
 //codigo para eliminar archivo subido por el admin
 
-const eliminarArchivoAdmin =async(req,res)=>{
+const eliminarArchivoAdmin = async (req, res) => {
 
-  const {id,public_id} = req.query
+  const { id, public_id } = req.query
 
   const isFolder = await AdminFiles.findById(id);
   if (!isFolder) {
     return res.json({ msg: "folder no existe" });
   }
 
-console.log(public_id)
+  console.log(public_id)
   try {
 
-      //to delete the file from cloudinary
-      await cloudinary.uploader.destroy(public_id, { resource_type: 'raw' })
+    //to delete the file from cloudinary
+    await cloudinary.uploader.destroy(public_id, { resource_type: 'raw' })
 
-      //obitiene el nombre del archivo
-      const fileName = public_id.split('/')[2]
-  
-      const fullYear = obtenerFecha()
-      const movimiento = { type: 'eliminar archivo admin', accion: `El Administrador ${req.user.email} ha eliminado el archivo ${fileName} del folder Administrador`, fecha: fullYear }
-      req.user.movimientos.unshift(movimiento)
-      await req.user.save()
-  
-    
+    //obitiene el nombre del archivo
+    const fileName = public_id.split('/')[2]
+
+    const fullYear = obtenerFecha()
+    const movimiento = { type: 'eliminar archivo admin', accion: `El Administrador ${req.user.email} ha eliminado el archivo ${fileName} del folder Administrador`, fecha: fullYear }
+    req.user.movimientos.unshift(movimiento)
+    await req.user.save()
+
+
 
     isFolder.remove()
-    res.json({msg:'folder ha sido removido'})
+    res.json({ msg: 'folder ha sido removido' })
 
   } catch (error) {
     console.log(error)
@@ -413,14 +413,14 @@ console.log(public_id)
 }
 
 //obtener los archivos que el admin sube
-const obtenerArchivosAdmin = async(req,res)=>{
+const obtenerArchivosAdmin = async (req, res) => {
 
   try {
 
     const adminFiles = await AdminFiles.find()
 
     res.json(adminFiles)
-    
+
   } catch (error) {
     console.log(error)
   }
