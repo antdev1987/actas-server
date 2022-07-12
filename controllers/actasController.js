@@ -263,12 +263,27 @@ const obtenerBds = async (req, res) => {
 
 
 /////////////funciones de los eventos
-//agregar un nuevo evento
-const agregarEvento = async (req, res) => {
+//agregar o editar un evento
+const agregarOEditarEvento = async (req, res) => {
+
+  console.log('en agregar evento')
 
   try {
 
-    const evento = new Eventos(req.body)
+    /* agregar y editar evento son similares es por eso que cree el codigo de abajo para decidir
+      si se esta editando o agregando una evento, asi se evita hacer un endpoint adicional
+    */
+    let evento
+    if(req.body._id){
+      evento = await Eventos.findById(req.body._id)
+    }else{
+      evento = new Eventos(req.body)
+    }
+
+    evento.title = req.body.title || evento.title
+    evento.start = req.body.start || evento.start
+    evento.end = req.body.end || evento.end
+    evento.user = req.body.user || evento.user
 
     const dataSaved = await evento.save()
 
@@ -316,7 +331,7 @@ const eliminarEvento = async (req, res) => {
 
 /////////////codigo para guardar archivo que el admin suba
 const guardarArchivosAdmin = async (req, res) => {
-
+  console.log(req.files, "aqui")
   console.log('en guardar archivos')
 
   try {
@@ -333,7 +348,7 @@ const guardarArchivosAdmin = async (req, res) => {
     })
     //en caso de que este intentando subir un archivo ya subido, no lo dejamos y mandamos un mensaje
     if (isArchivo.length >= !0) {
-      res.json({ msg: 'Esta subiendo archivo que ya existe' })
+      res.status(400).json({ msg: 'Esta subiendo archivo que ya existe' })
       return
     }
 
@@ -349,7 +364,6 @@ const guardarArchivosAdmin = async (req, res) => {
         unique_filename: false,
         folder: 'actas/AdminFiles'
       });
-      console.log(result)
       const newPath = {
         public_id: result.public_id,
         secure_url: result.secure_url,
@@ -365,7 +379,6 @@ const guardarArchivosAdmin = async (req, res) => {
     //este alamacenos varios datos a la vez
     const newArchivo = await AdminFiles.insertMany(dataTransformed)
 
-    console.log(newArchivo)
 
     res.status(201).json(newArchivo)
 
@@ -436,7 +449,7 @@ export {
   eliminarUnArchivo,
   obtenerBds,
   eliminarFolder,
-  agregarEvento,
+  agregarOEditarEvento,
   obtenerEventos,
   eliminarEvento,
 

@@ -12,7 +12,7 @@ import {
     obtenerBds,
     eliminarFolder,
     descargarArchivo,
-    agregarEvento,
+    agregarOEditarEvento,
     obtenerEventos,
     eliminarEvento,
     guardarArchivosAdmin,
@@ -52,7 +52,7 @@ router.delete('/eliminar-un-archivo',checkAuth,eliminarUnArchivo)
 router.delete('/eliminar-folder',checkAuth, eliminarFolder)
 
 
-router.post('/agregar-evento', agregarEvento)
+router.post('/agregar-o-editar-evento', agregarOEditarEvento)
 router.get('/obtener-eventos', obtenerEventos)
 router.delete('/eliminar-evento/:id',eliminarEvento)
 
