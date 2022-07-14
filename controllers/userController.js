@@ -43,7 +43,7 @@ const login = async (req, res) => {
   }
 };
 
-//////////////////// 
+//////////////////// aqui controlo los movimientos que se muestran en bitacora
 const movimientosUsuarios = async(req,res)=>{
   console.log('en todos los usuarios')
 
@@ -94,7 +94,7 @@ const crearUsuario = async (req, res) => {
   }
 };
 
-//192.168.100.7:4000/api/user/ver-usuario
+//192.168.100.7:4000/api/user/ver-usuario  son los usuarios de la ventana admin
 const verUsuario = async (req, res) => {
   console.log("en ver usuario");
 

@@ -10,28 +10,6 @@ app.use(cors())
 
 app.use(express.static('./uploads'))
 
-// const d_t = new Date();
-
-// let year = d_t.getFullYear()
-// let month = d_t.getMonth()
-// let day = d_t.getDate()
-
-// const fullYear = `${day}/${month}/${year}`
-
-// console.log(typeof fullYear)
-// console.log(day, '', +'', month,'' +'', year)
-
-// const d_t = new Date();
- 
-// let year = d_t.getFullYear();
-// let month = ("0" + (d_t.getMonth() + 1)).slice(-2);
-// let day = ("0" + d_t.getDate()).slice(-2);
-// let hour = d_t.getHours();
-// let minute = d_t.getMinutes();
-// let seconds = d_t.getSeconds();
-
-// // prints date & time in YYYY-MM-DD HH:MM:SS format
-// console.log(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + seconds);
 
 //importando las rutas
 import userRouter from './routes/userRouter.js'

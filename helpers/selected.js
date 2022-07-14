@@ -5,6 +5,7 @@
 
     import Entrega from "../models/Entrega.js";
     import Devolucion from "../models/Devolucion.js";
+    import PlanMantenimiento from "../models/PlanMantenimiento.js";
 
 
     const selected = (selector)=>{
@@ -13,6 +14,8 @@
           pickSelector = Entrega;
         } else if (selector === "Devolucion") {
           pickSelector = Devolucion;
+        }else if(selector === 'PlanMantenimiento'){
+          pickSelector = PlanMantenimiento
         }
         return pickSelector
     }

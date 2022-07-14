@@ -1,11 +1,12 @@
-import Actas from "../models/Actas.js";
 import Entrega from "../models/Entrega.js";
 import Devolucion from "../models/Devolucion.js";
+import PlanMantenimiento from "../models/PlanMantenimiento.js";
 import cloudinary from "../utils/cloudinary.js";
 import obtenerFecha from "../helpers/obtenerFecha.js";
 import Eventos from "../models/Eventos.js";
 import AdminFiles from "../models/AdminFiles.js";
 import selected from "../helpers/selected.js";
+
 
 //////////////////192.168.100.7:4000/api/actas/crear-folder
 const crearFolder = async (req, res) => {
@@ -199,6 +200,7 @@ const eliminarUnArchivo = async (req, res) => {
 
 
 ///////////////192.168.100.7:4000/api/actas/eliminar-folder
+//elimina el folder y todos los archivos en el
 const eliminarFolder = async (req, res) => {
 
   console.log('en eliminar folder')
@@ -249,10 +251,12 @@ const obtenerBds = async (req, res) => {
   try {
     const entrega = await Entrega.find()
     const devolucion = await Devolucion.find()
+    const planMantenimiento = await PlanMantenimiento.find()
 
     res.json({
       entrega,
-      devolucion
+      devolucion,
+      planMantenimiento
     })
 
   } catch (error) {
@@ -262,7 +266,7 @@ const obtenerBds = async (req, res) => {
 }
 
 
-/////////////funciones de los eventos
+/////////////funciones de los eventos en la parte del calendario
 //agregar o editar un evento
 const agregarOEditarEvento = async (req, res) => {
 
@@ -295,7 +299,7 @@ const agregarOEditarEvento = async (req, res) => {
 
 }
 
-//obtener los eventos
+//obtener los eventos por si cambia de pagina o actualizar el navegador
 const obtenerEventos = async (req, res) => {
 
   try {
@@ -390,7 +394,6 @@ const guardarArchivosAdmin = async (req, res) => {
 
 
 //codigo para eliminar archivo subido por el admin
-
 const eliminarArchivoAdmin = async (req, res) => {
 
   const { id, public_id } = req.query
@@ -425,7 +428,7 @@ const eliminarArchivoAdmin = async (req, res) => {
 
 }
 
-//obtener los archivos que el admin sube
+//obtener los archivos que el admin sube se muestra en el sidebar por si actualiza la pagina
 const obtenerArchivosAdmin = async (req, res) => {
 
   try {
