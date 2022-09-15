@@ -254,9 +254,9 @@ const obtenerBds = async (req, res) => {
     const planMantenimiento = await PlanMantenimiento.find()
 
     res.json({
-      entrega,
-      devolucion,
-      planMantenimiento
+      Entrega: entrega,
+      Devolucion: devolucion,
+      PlanMantenimiento: planMantenimiento
     })
 
   } catch (error) {
