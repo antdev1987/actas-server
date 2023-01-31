@@ -39,4 +39,4 @@ const start = async()=>{
 }
 
 //aqui se ejecuta para iniciar la app
-start()
+start()  

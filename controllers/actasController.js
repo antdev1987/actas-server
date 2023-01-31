@@ -79,7 +79,7 @@ const buscarFolder = async (req, res) => {
 const guardarArchivos = async (req, res) => {
   console.log("en guardar archivos");
 
-  const { id } = req.params;
+  const { id  } = req.params;
 
   //bloque de codigo siguiente es para especificar en que base de datos se va a trabajar
   const { selector } = req.body;
